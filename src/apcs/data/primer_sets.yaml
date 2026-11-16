@@ -1,0 +1,65 @@
+# Universal outward-facing primer sets for pooled whole-plasmid amplicon sequencing.
+#
+# Every primer is  [handle] + [6-nt index] + [arm].
+#   handle : constant, identical across a set. Used as a secondary anchor only.
+#   index  : the 6-nt barcode that identifies the well.
+#   arm    : anneals in a sequence every plasmid in the collection shares.
+#            The two arms point AWAY from each other, so on a circular template
+#            the product is the whole plasmid minus the gap between them.
+#
+# "blind_spot_bp" is that gap: sequence the amplicon never contains.
+
+sets:
+
+  cole1:
+    description: >
+      Original set (Aspacio / pooledpremiumpcrpipeline2). Arms sit in the pUC/ColE1
+      origin. Compatibility must be checked against each exact template.
+    handle_f: ACACTCTTTCCCTACAC
+    handle_r: GACTGGAGTTCAGACG
+    arm_f: CGGTAAGACACGACTTATCGCC
+    arm_r: GCGTCGATTTTTGTGATGCTCGTC
+    blind_spot_bp: 274
+    blind_spot_note: inside the ColE1 origin, between the two arms
+    status: upstream primer design; verify each template and assay locally
+    validated_on: no wet-lab validation dataset distributed with this release
+
+  ampr:
+    description: >
+      Proposed complementary Aureka set targeting the TEM-1 bla region.
+      Exact binding sites, blind spot, specificity and reaction conditions
+      must be checked for the user's template. Wet-lab performance unvalidated.
+    handle_f: ACACTCTTTCCCTACAC
+    handle_r: GACTGGAGTTCAGACG
+    arm_f: GGTGCCTCACTGATTAAGCATTGG
+    arm_r: TCGTTCATCCATAGTTGCCTGACTC
+    blind_spot_bp: 21
+    blind_spot_note: bla CDS positions 814-834 (C-terminal, between the two arms)
+    status: proposed; not wet-lab validated
+    validated_on: no public experimental validation; run apcs check first
+
+# 8 forward x 6 reverse = 48 wells. Index oligo names are the Aspacio-lab stock numbers.
+indexes:
+  forward:
+    M527: GAAGTC
+    M543: GAGATG
+    M544: CTCCGC
+    M545: TTTAAT
+    M854: GTGCCG
+    M855: AGAAAC
+    M856: CACTGT
+    M857: ACGGCG
+  reverse:
+    M528: ATACGT
+    M546: TCTAAC
+    M547: GCGACC
+    M881: GTCTGC
+    M858: AAATGC
+    M859: TGGCCC
+
+# Plate geometry: forward index -> row, reverse index -> column.
+plate:
+  rows:    [M527, M543, M544, M545, M854, M855, M856, M857]
+  columns: [M528, M546, M547, M881, M858, M859]
+  row_labels:    [a, b, c, d, e, f, g, h]
+  column_labels: ["1", "2", "3", "4", "5", "6"]

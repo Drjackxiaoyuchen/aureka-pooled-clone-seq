@@ -1,0 +1,10 @@
+{
+  "synthetic": true,
+  "seed": 7,
+  "reference_bp": 5200,
+  "blind_spot_bp": 274,
+  "substitution_rate": 0.012,
+  "insertion_rate": 0.006,
+  "deletion_rate": 0.009,
+  "note": "Independent toy errors; not an empirical nanopore error model."
+}

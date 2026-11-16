@@ -1,0 +1,17 @@
+well,sample,expected,fwd_index,rev_index
+a1,colony_a1,ref_wanted,M527,M528
+a2,colony_a2,ref_wanted,M527,M546
+a3,colony_a3,ref_wanted,M527,M547
+a4,colony_a4,ref_wanted,M527,M881
+a5,colony_a5,ref_wanted,M527,M858
+a6,colony_a6,ref_wanted,M527,M859
+b1,colony_b1,ref_wanted,M543,M528
+b2,colony_b2,ref_wanted,M543,M546
+b3,colony_b3,ref_wanted,M543,M547
+b4,colony_b4,ref_wanted,M543,M881
+b5,colony_b5,ref_wanted,M543,M858
+b6,colony_b6,ref_wanted,M543,M859
+c1,colony_c1,ref_wanted,M544,M528
+c2,colony_c2,ref_wanted,M544,M546
+c3,colony_c3,ref_wanted,M544,M547
+c4,colony_c4,ref_wanted,M544,M881

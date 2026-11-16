@@ -1,0 +1,9 @@
+lane,label,role,main_bp,intensity,saturated,verdict,note,pool_uL,pool_capped
+0,a1,sample,4834,2.06181422063775,False,OK,4834 bp,5.0,False
+1,a2,sample,4376,1.5468607645078234,False,OK,4376 bp,6.7,False
+2,ladder,ladder,,,,-,,0.0,False
+3,a3,sample,10727,2.0605466428995842,False,WRONG SIZE,10727 bp vs 5000.0 bp expected,0.0,False
+4,a4,sample,4834,2.062170726876609,False,MULTIPLE BANDS,2 bands - do not pool,0.0,False
+5,a5,sample,,0.0,False,NO BAND,nothing above background,0.0,False
+6,a6,sample,4834,4.332897603485839,True,REVIEW CLIPPING,4834 bp; possible clipping at image range limit; re-image before pooling,0.0,False
+7,a7,sample,4834,0.20707070707070707,False,REVIEW VOLUME,normalisation exceeds 20 uL cap; quantify or re-amplify,0.0,True

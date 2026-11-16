@@ -1,0 +1,192 @@
+{
+ "image": "synthetic_gel.png",
+ "n_lanes": 8,
+ "calibrated": true,
+ "review_required": true,
+ "note": "Heuristic image QC; verify all detected lanes and ladder assignments before pooling.",
+ "lanes": [
+  {
+   "lane": 0,
+   "label": "a1",
+   "role": "sample",
+   "lane_bounds_px": [
+    48,
+    114
+   ],
+   "bands": [
+    {
+     "row": 200,
+     "intensity": 2.06181422063775,
+     "prominence": 0.2628639334521687,
+     "size_bp": 4834,
+     "saturated": false
+    }
+   ],
+   "main_bp": 4834,
+   "intensity": 2.06181422063775,
+   "saturated": false,
+   "verdict": "OK",
+   "note": "4834 bp",
+   "pool_uL": 5.0,
+   "pool_capped": false
+  },
+  {
+   "lane": 1,
+   "label": "a2",
+   "role": "sample",
+   "lane_bounds_px": [
+    136,
+    202
+   ],
+   "bands": [
+    {
+     "row": 210,
+     "intensity": 1.5468607645078234,
+     "prominence": 0.19734600911071495,
+     "size_bp": 4376,
+     "saturated": false
+    }
+   ],
+   "main_bp": 4376,
+   "intensity": 1.5468607645078234,
+   "saturated": false,
+   "verdict": "OK",
+   "note": "4376 bp",
+   "pool_uL": 6.7,
+   "pool_capped": false
+  },
+  {
+   "lane": 2,
+   "label": "ladder",
+   "role": "ladder",
+   "bands": [],
+   "verdict": "-",
+   "pool_uL": 0.0,
+   "pool_capped": false
+  },
+  {
+   "lane": 3,
+   "label": "a3",
+   "role": "sample",
+   "lane_bounds_px": [
+    312,
+    378
+   ],
+   "bands": [
+    {
+     "row": 120,
+     "intensity": 2.0605466428995842,
+     "prominence": 0.2627649039413745,
+     "size_bp": 10727,
+     "saturated": false
+    }
+   ],
+   "main_bp": 10727,
+   "intensity": 2.0605466428995842,
+   "saturated": false,
+   "verdict": "WRONG SIZE",
+   "note": "10727 bp vs 5000.0 bp expected",
+   "pool_uL": 0.0,
+   "pool_capped": false
+  },
+  {
+   "lane": 4,
+   "label": "a4",
+   "role": "sample",
+   "lane_bounds_px": [
+    400,
+    466
+   ],
+   "bands": [
+    {
+     "row": 200,
+     "intensity": 2.062170726876609,
+     "prominence": 0.2628639334521687,
+     "size_bp": 4834,
+     "saturated": false
+    },
+    {
+     "row": 300,
+     "intensity": 1.7199247375717963,
+     "prominence": 0.21917211328976036,
+     "size_bp": 1785,
+     "saturated": false
+    }
+   ],
+   "main_bp": 4834,
+   "intensity": 2.062170726876609,
+   "saturated": false,
+   "verdict": "MULTIPLE BANDS",
+   "note": "2 bands - do not pool",
+   "pool_uL": 0.0,
+   "pool_capped": false
+  },
+  {
+   "lane": 5,
+   "label": "a5",
+   "role": "sample",
+   "lane_bounds_px": [
+    488,
+    554
+   ],
+   "bands": [],
+   "main_bp": null,
+   "intensity": 0.0,
+   "saturated": false,
+   "verdict": "NO BAND",
+   "note": "nothing above background",
+   "pool_uL": 0.0,
+   "pool_capped": false
+  },
+  {
+   "lane": 6,
+   "label": "a6",
+   "role": "sample",
+   "lane_bounds_px": [
+    576,
+    642
+   ],
+   "bands": [
+    {
+     "row": 200,
+     "intensity": 4.332897603485839,
+     "prominence": 0.43969102792632203,
+     "size_bp": 4834,
+     "saturated": true
+    }
+   ],
+   "main_bp": 4834,
+   "intensity": 4.332897603485839,
+   "saturated": true,
+   "verdict": "REVIEW CLIPPING",
+   "note": "4834 bp; possible clipping at image range limit; re-image before pooling",
+   "pool_uL": 0.0,
+   "pool_capped": false
+  },
+  {
+   "lane": 7,
+   "label": "a7",
+   "role": "sample",
+   "lane_bounds_px": [
+    664,
+    730
+   ],
+   "bands": [
+    {
+     "row": 200,
+     "intensity": 0.20707070707070707,
+     "prominence": 0.026242820360467416,
+     "size_bp": 4834,
+     "saturated": false
+    }
+   ],
+   "main_bp": 4834,
+   "intensity": 0.20707070707070707,
+   "saturated": false,
+   "verdict": "REVIEW VOLUME",
+   "note": "normalisation exceeds 20 uL cap; quantify or re-amplify",
+   "pool_uL": 0.0,
+   "pool_capped": true
+  }
+ ]
+}
