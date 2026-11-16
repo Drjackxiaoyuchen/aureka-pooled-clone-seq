@@ -10,26 +10,13 @@ Read layout, forward orientation:
 """
 from __future__ import annotations
 import os
+import csv
+from contextlib import ExitStack
+import edlib
 from collections import Counter
 from dataclasses import dataclass, asdict
-from .seqio import rc, mismatches, read_fastq, write_fastq
+from .seqio import rc, mismatches, read_fastq
 from .primersets import max_safe_error_budget
-
-SEED = 10        # exact-match seed used to locate the arm
-SEED_STEP = 4    # overlapping seeds, so one indel cannot destroy every seed
-
-
-def _seed_positions(arm: str):
-    """Overlapping seeds covering the arm, with their offsets.
-
-    Overlapping matters: a single deleted base destroys any seed spanning it,
-    so non-overlapping seeds can leave an arm unfindable."""
-    stops = list(range(0, max(1, len(arm) - SEED + 1), SEED_STEP))
-    last = len(arm) - SEED
-    if last > 0 and stops[-1] != last:
-        stops.append(last)
-    return [(i, arm[i:i + SEED]) for i in stops] or [(0, arm[:SEED])]
-
 
 def _edit(a: str, b: str, limit: int) -> int:
     """Levenshtein with early exit. Both strings are short (<=30)."""
@@ -48,37 +35,17 @@ def _edit(a: str, b: str, limit: int) -> int:
     return prev[-1]
 
 
-def find_arm(read: str, arm: str, max_edit: int, slack: int = 4):
-    """Read position aligned to arm[0], or -1.
+def _arm_locations(read, arm, max_edit):
+    result = edlib.align(arm, read, mode='HW', task='locations', k=max_edit)
+    if result['editDistance'] < 0:
+        return []
+    return [(start, end + 1, result['editDistance']) for start, end in result['locations']]
 
-    Nanopore reads carry indels, so a Hamming-only check throws away arms that
-    are perfectly recognisable: one deleted base shifts every later position.
-    We seed on an exact 10-mer, then score a small window with edit distance
-    and keep the offset that fits best."""
-    L = len(arm)
-    cands = set()
-    for off, seed in _seed_positions(arm):
-        start = 0
-        while True:
-            j = read.find(seed, start)
-            if j < 0:
-                break
-            p = j - off
-            if 0 <= p <= len(read) - L + slack:
-                cands.add(p)
-            start = j + 1
-    best, best_d = -1, max_edit + 1
-    for p in sorted(cands):
-        for d in range(-slack, slack + 1):
-            q = p + d
-            if q < 0 or q + L - slack > len(read):
-                continue
-            dist = _edit(read[q:q + L], arm, max_edit)
-            if dist < best_d or (dist == best_d and best >= 0 and q < best):
-                best, best_d = q, dist
-        if best_d == 0:
-            break
-    return best if best_d <= max_edit else -1
+
+def find_arm(read: str, arm: str, max_edit: int, slack: int = 4):
+    """Compatibility helper: first optimal start, with full-query edit matching."""
+    hits = _arm_locations(read, arm, max_edit)
+    return min((start for start, _, _ in hits), default=-1)
 
 
 def call_index(obs: str, index_map: dict, max_mm: int = 1):
@@ -109,6 +76,13 @@ class ReadCall:
     status: str = "unassigned"
     handle_f_seen: bool = False
     handle_r_seen: bool = False
+    fwd_arm_start: int | None = None
+    fwd_arm_end: int | None = None
+    rev_arm_start: int | None = None
+    rev_arm_end: int | None = None
+    fwd_index_mismatches: int | None = None
+    rev_index_mismatches: int | None = None
+    assignment_edits: int | None = None
 
 
 def _index_near(s: str, end: int, index_map: dict, index_mm: int, shift: int = 1):
@@ -145,56 +119,65 @@ def _index_near_rev(s: str, start: int, index_map: dict, index_mm: int, shift: i
     return next(iter(names)) if len(names) == 1 else None
 
 
-def call_read(seq: str, pset, cfg, arm_mm: int = 4, index_mm: int = 1, index_shift: int = 1):
-    """Try both orientations; return the best ReadCall."""
-    best = None
-    complete = []
-    for orient, s in (("+", seq), ("-", rc(seq))):
-        # The barcodes must belong to the amplicon ends. Internal primer-like
-        # sequences in concatamers or unrelated molecules cannot identify a well.
-        fp = find_arm(s[:250], pset.arm_f, arm_mm)
-        tail_start = max(0, len(s) - 250)
-        rp = find_arm(s[tail_start:], rc(pset.arm_r), arm_mm)
-        rp = rp + tail_start if rp >= 0 else -1
-        fi = ri = None
-        hf = hr = False
-        if fp >= 6:
-            fi = _index_near(s, fp, cfg.fwd_index, index_mm, index_shift)
-            hs = fp - 6 - len(pset.handle_f)
-            if hs >= 0:
-                hf = _edit(s[hs:fp - 6], pset.handle_f, 4) <= 4
-        if rp >= 0:
-            e = rp + len(pset.arm_r)
-            ri = _index_near_rev(s, e, cfg.rev_index, index_mm, index_shift)
-            he = e + 6 + len(pset.handle_r)
-            if ri and he <= len(s):
-                hr = _edit(rc(s[e + 6:he]), pset.handle_r, 4) <= 4
-        score = (fi is not None) + (ri is not None)
-        cand = ReadCall(name="", length=len(seq), orientation=orient, fwd_index=fi, rev_index=ri,
-                        handle_f_seen=hf, handle_r_seen=hr)
-        if score == 2 and fp + len(pset.arm_f) < rp:
-            complete.append(cand)
-        if best is None or score > (best.fwd_index is not None) + (best.rev_index is not None):
-            best = cand
-    pairs = {(c.fwd_index, c.rev_index) for c in complete}
-    if len(pairs) > 1:
-        return ReadCall(name="", length=len(seq), status="ambiguous")
-    if complete:
-        best = complete[0]
-    elif best.fwd_index and best.rev_index:
-        return ReadCall(name="", length=len(seq), status="ambiguous")
-    if best.fwd_index and best.rev_index:
-        best.well = cfg.well_of(best.fwd_index, best.rev_index)
-        best.status = "assigned" if best.well else "impossible_pair"
-    elif best.fwd_index or best.rev_index:
-        best.status = "one_index_only"
-    else:
-        best.status = "unassigned"
-    return best
+def _end_candidates(seq, arm, indexes, reverse, arm_mm, index_mm, shift):
+    offset = max(0, len(seq) - 250) if reverse else 0
+    target = seq[offset:] if reverse else seq[:250]
+    hits = []
+    for start, end, edits in _arm_locations(target, arm, arm_mm):
+        start, end = start + offset, end + offset
+        for delta in range(-shift, shift + 1):
+            left = end + delta if reverse else start + delta - 6
+            if left < 0 or left + 6 > len(seq):
+                continue
+            observed = rc(seq[left:left + 6]) if reverse else seq[left:left + 6]
+            name, distance = call_index(observed, indexes, index_mm)
+            if name:
+                hits.append(dict(name=name, start=start, end=end, index_left=left,
+                                 arm_edits=edits, index_edits=distance, score=edits + distance))
+    return hits
 
 
-def demux(fastq_path, pset, cfg, outdir, min_len=1000, arm_mm=4, index_mm=1,
-          index_shift=1, write_reads=True, used_wells=None):
+def call_read(seq: str, pset, cfg, arm_mm: int = 4, index_mm: int = 0, index_shift: int = 1):
+    """Compare valid end/index pairs across both orientations; reject equal-best wells."""
+    complete, partial = [], []
+    for orientation, s in (('+', seq), ('-', rc(seq))):
+        forward = _end_candidates(s, pset.arm_f, cfg.fwd_index, False, arm_mm, index_mm, index_shift)
+        reverse = _end_candidates(s, rc(pset.arm_r), cfg.rev_index, True, arm_mm, index_mm, index_shift)
+        for f in forward:
+            for r in reverse:
+                if f['end'] >= r['start']:
+                    continue
+                left = f['index_left'] - len(pset.handle_f)
+                right = r['index_left'] + 6
+                complete.append(ReadCall(
+                    name='', length=len(seq), orientation=orientation,
+                    fwd_index=f['name'], rev_index=r['name'],
+                    fwd_arm_start=f['start'], fwd_arm_end=f['end'],
+                    rev_arm_start=r['start'], rev_arm_end=r['end'],
+                    fwd_index_mismatches=f['index_edits'], rev_index_mismatches=r['index_edits'],
+                    assignment_edits=f['score'] + r['score'],
+                    handle_f_seen=left >= 0 and _edit(s[left:f['index_left']], pset.handle_f, 4) <= 4,
+                    handle_r_seen=right + len(pset.handle_r) <= len(s)
+                        and _edit(rc(s[right:right + len(pset.handle_r)]), pset.handle_r, 4) <= 4))
+        if forward or reverse:
+            partial.append(ReadCall(name='', length=len(seq), orientation=orientation,
+                                    fwd_index=forward[0]['name'] if forward else None,
+                                    rev_index=reverse[0]['name'] if reverse else None,
+                                    status='one_index_only' if bool(forward) != bool(reverse) else 'ambiguous'))
+    if not complete:
+        return partial[0] if partial else ReadCall(name='', length=len(seq))
+    score = min(c.assignment_edits for c in complete)
+    best = [c for c in complete if c.assignment_edits == score]
+    if len({(c.fwd_index, c.rev_index) for c in best}) != 1:
+        return ReadCall(name='', length=len(seq), status='ambiguous')
+    call = best[0]
+    call.well = cfg.well_of(call.fwd_index, call.rev_index)
+    call.status = 'assigned' if call.well else 'impossible_pair'
+    return call
+
+
+def demux(fastq_path, pset, cfg, outdir, min_len=1000, arm_mm=4, index_mm=0,
+          index_shift=1, write_reads=True, used_wells=None, collect_calls=False):
     """Demultiplex a pooled FASTQ. Returns a dict of per-well and run-level stats."""
     safe_budget = min(max_safe_error_budget(cfg.fwd_index), max_safe_error_budget(cfg.rev_index))
     if min_len < 1 or arm_mm < 0 or not 0 <= index_mm <= safe_budget or not 0 <= index_shift <= 2:
@@ -202,36 +185,50 @@ def demux(fastq_path, pset, cfg, outdir, min_len=1000, arm_mm=4, index_mm=1,
     if write_reads and os.path.isdir(outdir) and os.listdir(outdir):
         raise ValueError("demux output already contains files; choose a fresh output directory")
     os.makedirs(outdir, exist_ok=True)
-    buckets, calls = {}, []
+    lengths, calls = {}, []
     n_total = n_short = 0
     status_counts = Counter()
-    for name, seq, qual in read_fastq(fastq_path):
-        n_total += 1
-        if len(seq) < min_len:
-            n_short += 1
-            continue
-        c = call_read(seq, pset, cfg, arm_mm, index_mm, index_shift)
-        c.name = name
-        calls.append(c)
-        status_counts[c.status] += 1
-        key = c.well if c.status == "assigned" else (
-            "one_index_only" if c.status == "one_index_only" else "unassigned")
-        s, q = (seq, qual) if c.orientation == "+" else (rc(seq), qual[::-1])
-        buckets.setdefault(key, []).append((name, s, q))
-
-    if write_reads:
-        for key, recs in buckets.items():
-            write_fastq(os.path.join(outdir, f"{key}.fastq"), recs)
+    seen = set()
+    with ExitStack() as stack:
+        handles = {}
+        writer = None
+        if write_reads:
+            audit = stack.enter_context(open(os.path.join(outdir, 'read_assignments.tsv'), 'w', newline=''))
+            writer = csv.DictWriter(audit, fieldnames=list(ReadCall.__dataclass_fields__), delimiter='\t')
+            writer.writeheader()
+        for name, seq, qual in read_fastq(fastq_path):
+            if name in seen:
+                raise ValueError(f'duplicate FASTQ read ID: {name}; duplicate molecules cannot inflate depth')
+            seen.add(name)
+            n_total += 1
+            if len(seq) < min_len:
+                n_short += 1
+                c = ReadCall(name=name, length=len(seq), status='below_min_length')
+            else:
+                c = call_read(seq, pset, cfg, arm_mm, index_mm, index_shift)
+                c.name = name
+                status_counts[c.status] += 1
+            if collect_calls:
+                calls.append(asdict(c))
+            if writer:
+                writer.writerow(asdict(c))
+            key = c.well if c.status == 'assigned' else c.status
+            if c.status == 'assigned':
+                lengths.setdefault(key, []).append(len(seq))
+            if write_reads:
+                if key not in handles:
+                    handles[key] = stack.enter_context(open(os.path.join(outdir, f'{key}.fastq'), 'w'))
+                s, q = (rc(seq), qual[::-1]) if c.orientation == '-' else (seq, qual)
+                handles[key].write(f'@{name}\n{s}\n+\n{q}\n')
 
     all_wells = [w for w, _, _ in cfg.wells()]
     used = set(used_wells) if used_wells is not None else None
     per_well = []
     for w in all_wells:
-        recs = buckets.get(w, [])
-        lens = sorted(len(s) for _, s, _ in recs)
+        lens = sorted(lengths.get(w, []))
         per_well.append({
             "well": w,
-            "n_reads": len(recs),
+            "n_reads": len(lens),
             "median_len": lens[len(lens) // 2] if lens else 0,
             "max_len": lens[-1] if lens else 0,
             "in_use": (w in used) if used is not None else True,
@@ -254,7 +251,9 @@ def demux(fastq_path, pset, cfg, outdir, min_len=1000, arm_mm=4, index_mm=1,
         "arm_edits_allowed": arm_mm,
         "index_mismatches_allowed": index_mm,
         "index_shift_allowed": index_shift,
+        "arm_matching": "edlib full-query alignment; variable aligned arm span",
+        "audit_file": "demux/read_assignments.tsv",
         "sentinel_wells_with_reads": [(p["well"], p["n_reads"]) for p in sentinel],
         "sentinel_reads": sum(p["n_reads"] for p in sentinel),
     }
-    return {"run": run, "per_well": per_well, "calls": [asdict(c) for c in calls]}
+    return {"run": run, "per_well": per_well, "calls": calls}

@@ -103,6 +103,8 @@ def plate_html(cfg, by_well, meta):
 <div class="scroll"><table aria-label="Clone screening plate"><tr><th></th>{th}</tr>{''.join(body)}</table></div>
 <div class="legend">PICK / BACKUP / SPARE: reference screen passed or needs review · red: wrong or mixed evidence · gray: no call. Click a loaded well for details.</div>
 <div id="detail" role="status" aria-live="polite">Select a loaded well to inspect its evidence.</div>
+<p><a id="genbank-download" hidden>Annotated reference + read evidence (.gb)</a> <a id="amplicon-download" hidden>Predicted indexed amplicon (.gb)</a></p>
+<p class="legend"><a href="../demux/read_assignments.tsv">Per-read assignment audit (.tsv)</a> · GenBank exports retain reference sequence; they are not read-derived consensuses.</p>
 <div class=meta>{html.escape(meta.get('footer',''))}</div>
 <script type="application/json" id="well-data">{data}</script>
 <script>
@@ -114,6 +116,9 @@ function showWell(el) {{
   'Reference: ' + (w.best_ref || 'unresolved') + '\\n' +
   'Assigned / mapped / informative molecules: ' + w.assigned_reads + ' / ' + w.n_reads + ' / ' + w.n_informative_reads + '\\n' +
   'Dominant vote support: ' + (w.purity * 100).toFixed(1) + '% · Alignment breadth: ' + w.breadth_pct + '%\\n' + w.note;
+ for(const [id,key] of [['genbank-download','genbank_file'],['amplicon-download','amplicon_file']]) {{
+  const a=document.getElementById(id); a.hidden=!w[key]; if(w[key]) a.href=w[key];
+ }}
 }}
 document.querySelectorAll('[data-well]').forEach(el => {{
  el.addEventListener('click', () => showWell(el));
@@ -132,7 +137,7 @@ def write_report(outdir, cfg, wells, run, meta):
 
     fields = ["well", "label", "in_use", "verdict", "rank", "assigned_reads", "n_reads", "median_len",
               "n_informative_reads", "best_ref", "purity", "n_site_calls", "mean_identity",
-              "breadth_pct", "mean_depth", "second_ref", "second_n", "unmapped", "n_ambiguous_reads", "note"]
+              "breadth_pct", "mean_depth", "second_ref", "second_n", "unmapped", "n_ambiguous_reads", "genbank_file", "amplicon_file", "note"]
     with open(os.path.join(outdir, "per_well.csv"), "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=fields, extrasaction="ignore")
         w.writeheader()

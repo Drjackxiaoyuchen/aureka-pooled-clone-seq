@@ -1,49 +1,49 @@
-well,label,in_use,verdict,rank,assigned_reads,n_reads,median_len,n_informative_reads,best_ref,purity,n_site_calls,mean_identity,breadth_pct,mean_depth,second_ref,second_n,unmapped,n_ambiguous_reads,note
-a1,colony_a1,True,BACKUP,4,35,35,4953,35,ref_wanted,1.0,35,0.9729,94.8,33.2,,0,0,0,reference screen passed; confirm the isolated plasmid
-a2,colony_a2,True,SPARE,9,26,26,4953,26,ref_wanted,1.0,26,0.9737,94.8,24.6,,0,0,0,reference screen passed; confirm the isolated plasmid
-a3,colony_a3,True,SPARE,5,34,34,4954,34,ref_wanted,1.0,34,0.9734,94.9,32.2,,0,0,0,reference screen passed; confirm the isolated plasmid
-a4,colony_a4,True,PICK,1,38,38,4954,38,ref_wanted,1.0,38,0.9736,94.8,36.0,,0,0,0,reference screen passed; confirm the isolated plasmid
-a5,colony_a5,True,SPARE,8,31,31,4956,31,ref_wanted,1.0,31,0.9738,94.8,29.4,,0,0,0,reference screen passed; confirm the isolated plasmid
-a6,colony_a6,True,BACKUP,3,35,35,4953,35,ref_wanted,1.0,35,0.9733,94.9,33.2,,0,0,0,reference screen passed; confirm the isolated plasmid
-b1,colony_b1,True,SPARE,6,32,32,4952,32,ref_wanted,1.0,32,0.9735,94.7,30.3,,0,0,0,reference screen passed; confirm the isolated plasmid
-b2,colony_b2,True,SPARE,7,32,32,4953,32,ref_wanted,1.0,32,0.973,94.8,30.3,,0,0,0,reference screen passed; confirm the isolated plasmid
-b3,colony_b3,True,PICK,2,35,35,4955,35,ref_wanted,1.0,35,0.9742,94.8,33.2,,0,0,0,reference screen passed; confirm the isolated plasmid
-b4,colony_b4,True,WRONG CONSTRUCT,,29,29,4958,29,ref_parent,0.9655,29,0.9732,94.8,27.5,ref_wanted,1,0,0,97% of informative molecule votes say ref_parent; expected ref_wanted
-b5,colony_b5,True,WRONG CONSTRUCT,,33,33,4954,33,ref_parent,1.0,33,0.974,94.8,31.3,,0,0,0,100% of informative molecule votes say ref_parent; expected ref_wanted
-b6,colony_b6,True,WRONG CONSTRUCT,,31,31,4953,31,ref_parent,1.0,31,0.973,94.8,29.4,,0,0,0,100% of informative molecule votes say ref_parent; expected ref_wanted
-c1,colony_c1,True,MIXED - DISCARD,,41,41,4958,41,ref_parent,0.5122,41,0.9635,94.8,38.8,ref_wanted,20,0,0,"51% of 41 informative molecule votes say ref_parent, the rest say ref_wanted and whole reads split the same way - mixed reference evidence; re-streak and confirm"
-c2,colony_c2,True,NO CALL,,2,2,4951,2,ref_wanted,1.0,2,0.972,94.8,1.9,,0,0,0,only 2 reads (need 8)
-c3,colony_c3,True,NO CALL,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,no reads survived the length filter
-c4,colony_c4,True,WRONG CONSTRUCT,,10,10,4952,10,ref_parent,0.9,10,0.971,94.8,9.5,ref_wanted,1,0,0,90% of informative molecule votes say ref_parent; expected ref_wanted
-c5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-c6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-d1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-d2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-d3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-d4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-d5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-d6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-e1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-e2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-e3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-e4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-e5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-e6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-f1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-f2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-f3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-f4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-f5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-f6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-g1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-g2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-g3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-g4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-g5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-g6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-h1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-h2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-h3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-h4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-h5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
-h6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,sentinel - no sample loaded
+well,label,in_use,verdict,rank,assigned_reads,n_reads,median_len,n_informative_reads,best_ref,purity,n_site_calls,mean_identity,breadth_pct,mean_depth,second_ref,second_n,unmapped,n_ambiguous_reads,genbank_file,amplicon_file,note
+a1,colony_a1,True,SPARE,6,30,30,4954,30,ref_wanted,1.0,30,0.9726,94.8,28.4,,0,0,0,../annotations/wells/a1.reference_evidence.gb,../annotations/wells/a1.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+a2,colony_a2,True,SPARE,9,22,22,4953,22,ref_wanted,1.0,22,0.9737,94.8,20.8,,0,0,0,../annotations/wells/a2.reference_evidence.gb,../annotations/wells/a2.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+a3,colony_a3,True,BACKUP,4,31,31,4955,31,ref_wanted,1.0,31,0.9736,94.8,29.4,,0,0,0,../annotations/wells/a3.reference_evidence.gb,../annotations/wells/a3.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+a4,colony_a4,True,PICK,1,35,35,4954,35,ref_wanted,1.0,35,0.9733,94.8,33.2,,0,0,0,../annotations/wells/a4.reference_evidence.gb,../annotations/wells/a4.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+a5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+a6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+b1,colony_b1,True,SPARE,8,27,27,4956,27,ref_wanted,1.0,27,0.9738,94.7,25.6,,0,0,0,../annotations/wells/b1.reference_evidence.gb,../annotations/wells/b1.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+b2,colony_b2,True,SPARE,5,31,31,4953,31,ref_wanted,1.0,31,0.973,94.8,29.4,,0,0,0,../annotations/wells/b2.reference_evidence.gb,../annotations/wells/b2.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+b3,colony_b3,True,BACKUP,3,32,32,4953,32,ref_wanted,1.0,32,0.9735,94.8,30.3,,0,0,0,../annotations/wells/b3.reference_evidence.gb,../annotations/wells/b3.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+b4,colony_b4,True,SPARE,7,29,29,4952,29,ref_wanted,1.0,29,0.973,94.8,27.5,,0,0,0,../annotations/wells/b4.reference_evidence.gb,../annotations/wells/b4.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+b5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+b6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+c1,colony_c1,True,PICK,2,33,33,4954,33,ref_wanted,1.0,33,0.974,94.8,31.3,,0,0,0,../annotations/wells/c1.reference_evidence.gb,../annotations/wells/c1.predicted_amplicon.gb,reference screen passed; confirm the isolated plasmid
+c2,colony_c2,True,WRONG CONSTRUCT,,24,24,4956,24,ref_parent,1.0,24,0.9736,94.8,22.7,,0,0,0,../annotations/wells/c2.reference_evidence.gb,../annotations/wells/c2.predicted_amplicon.gb,100% of informative molecule votes say ref_parent; expected ref_wanted
+c3,colony_c3,True,WRONG CONSTRUCT,,27,27,4956,27,ref_parent,1.0,27,0.9736,94.8,25.6,,0,0,0,../annotations/wells/c3.reference_evidence.gb,../annotations/wells/c3.predicted_amplicon.gb,100% of informative molecule votes say ref_parent; expected ref_wanted
+c4,colony_c4,True,WRONG CONSTRUCT,,25,25,4953,25,ref_parent,1.0,25,0.9731,94.8,23.7,,0,0,0,../annotations/wells/c4.reference_evidence.gb,../annotations/wells/c4.predicted_amplicon.gb,100% of informative molecule votes say ref_parent; expected ref_wanted
+c5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+c6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+d1,colony_d1,True,MIXED - DISCARD,,39,39,4958,39,ref_parent,0.5641,39,0.9643,94.8,37.0,ref_wanted,17,0,0,../annotations/wells/d1.reference_evidence.gb,../annotations/wells/d1.predicted_amplicon.gb,"56% of 39 informative molecule votes say ref_parent, the rest say ref_wanted and whole reads split the same way - mixed reference evidence; re-streak and confirm"
+d2,colony_d2,True,NO CALL,,2,2,4951,2,ref_wanted,1.0,2,0.9718,94.8,1.9,,0,0,0,../annotations/wells/d2.reference_evidence.gb,../annotations/wells/d2.predicted_amplicon.gb,only 2 reads (need 8)
+d3,colony_d3,True,NO CALL,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,../annotations/wells/d3.reference_evidence.gb,../annotations/wells/d3.predicted_amplicon.gb,no reads survived the length filter
+d4,colony_d4,True,WRONG CONSTRUCT,,12,12,4951,12,ref_parent,1.0,12,0.973,94.8,11.4,,0,0,0,../annotations/wells/d4.reference_evidence.gb,../annotations/wells/d4.predicted_amplicon.gb,100% of informative molecule votes say ref_parent; expected ref_wanted
+d5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+d6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+e1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+e2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+e3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+e4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+e5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+e6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+f1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+f2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+f3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+f4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+f5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+f6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+g1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+g2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+g3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+g4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+g5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+g6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+h1,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+h2,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+h3,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+h4,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+h5,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded
+h6,,False,NOT USED,,0,0,0,0,,0.0,0,0.0,0.0,0.0,,0,0,0,,,sentinel - no sample loaded

@@ -1,0 +1,9 @@
+# Reference coordinates: 0-based half-open. Alignment-span depth, not base-call pileup.
+ref_parent	0	20	39
+ref_parent	20	22	38
+ref_parent	22	23	35
+ref_parent	23	24	34
+ref_parent	24	25	2
+ref_parent	25	294	0
+ref_parent	294	299	38
+ref_parent	299	5200	39

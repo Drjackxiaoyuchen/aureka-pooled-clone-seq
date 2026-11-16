@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aureka-pooled-clone-seq"
-version = "0.2.0"
+version = "0.3.0"
 description = "Aureka indexed colony-PCR sequencing screen and plate reports"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 authors = [{name = "Aureka"}]
 requires-python = ">=3.10"
-dependencies = ["pyyaml>=6", "numpy>=1.24", "pillow>=10", "mappy>=2.26", "openpyxl>=3.1", "edlib>=1.3.9"]
+dependencies = ["pyyaml>=6", "numpy>=1.24", "pillow>=10", "mappy>=2.26", "openpyxl>=3.1", "edlib>=1.3.9", "biopython>=1.83"]
 
 [project.urls]
 Repository = "https://github.com/Drjackxiaoyuchen/aureka-pooled-clone-seq"

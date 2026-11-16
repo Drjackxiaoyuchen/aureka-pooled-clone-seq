@@ -1,0 +1,13 @@
+name	length	orientation	fwd_index	rev_index	well	status	handle_f_seen	handle_r_seen	fwd_arm_start	fwd_arm_end	rev_arm_start	rev_arm_end	fwd_index_mismatches	rev_index_mismatches	assignment_edits
+b3_read38	4961	+	M543	M547	b3	assigned	True	True	23	45	4915	4939	0	0	1
+c2_read42	4958	+	M544			one_index_only	False	False							
+a3_read39	4934	+	M527	M547	a3	assigned	False	True	8	30	4888	4912	0	0	2
+d1_read30	2971	+	M545			one_index_only	False	False							
+d1_read36	4962	+	M545	M528	d1	assigned	True	True	23	45	4916	4940	0	0	3
+d1_read44	4958	-		M528		one_index_only	False	False							
+d1_read21	1909	+		M528		one_index_only	False	False							
+b3_read40	4965	-	M543	M547	b3	assigned	True	True	23	46	4920	4943	0	0	5
+c1_read1	4947	+	M544	M528	c1	assigned	False	True	19	41	4900	4925	0	0	1
+junk5	2673	.				unassigned	False	False							
+b1_read30	2151	-		M528		one_index_only	False	False							
+c2_read22	1872	-		M546		one_index_only	False	False							

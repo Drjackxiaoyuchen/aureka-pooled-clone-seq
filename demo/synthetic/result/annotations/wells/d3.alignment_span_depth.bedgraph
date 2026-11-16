@@ -1,0 +1,2 @@
+# Reference coordinates: 0-based half-open. Alignment-span depth, not base-call pileup.
+ref_wanted	0	5200	0

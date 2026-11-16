@@ -10,6 +10,13 @@ Screen indexed colony-PCR amplicons from a pooled long-read FASTQ and produce an
 
 **[Open the synthetic demo](https://drjackxiaoyuchen.github.io/aureka-pooled-clone-seq/)** · [Bench guide](docs/01_bench_protocol.md) · [中文流程](docs/01_bench_protocol_zh.md) · [Review and limitations](docs/REVIEW.md)
 
+**Order ColE1 now:** [12 required sequences](primers/ColE1_ORDER_32well.txt) · [Excel order + A1–H4 well map](primers/Aureka_ColE1_32well_Order.xlsx).
+The preferred layout is **A1–A4, B1–B4, … H1–H4**: eight forward and four reverse oligos. The final two reverse oligos in the workbook are optional expansion to columns 5–6.
+
+![Primer architecture](assets/graphics/primer_architecture.svg)
+
+[Binding sites and mechanism](docs/06_MECHANISM_AND_BINDING.md) · [PCR QC guide](docs/07_PCR_QC_GUIDE.md) · [Output and annotated GenBank guide](docs/08_OUTPUTS_AND_GENBANK.md) · [v0.3 demultiplexing review](docs/09_DEMULTIPLEX_REVIEW.md)
+
 ```text
 Check exact templates → assign colonies → indexed PCR → review gel / quantify
     → pool compatible amplicons → end-preserving long-read sequencing
@@ -53,6 +60,9 @@ apcs indexqc
 # reference filename stems in samples.csv; preserve the well/index assignments.
 apcs plan -n 16 --set cole1 -o my-plan
 
+# Demultiplex only: no plasmid reference is needed for read separation.
+apcs demux pool.fastq.gz --samples my-plan/samples.csv --set cole1 -o separated
+
 # Optional heuristic image review. Labels must cover EVERY sample lane.
 # Use your actual ladder sizes, lane count, image and expected product size.
 apcs gel gel.png --expected-bp 5000 --ladder-lane 0 \
@@ -67,11 +77,15 @@ Use fresh output directories; existing plans or sequencing outputs are protected
 
 `apcs order --set cole1 -o my-order` exports CSV and XLSX order sheets. Review exact-template matches and supplier requirements before ordering. `--set ampr` exports the proposed AmpR design, whose experimental performance has not been established.
 
+The order command defaults to four reverse indexes (12 oligos total); `--columns 6` includes all 14. `apcs plan` defaults to the four-column layout (32 positions); `--layout row` enables the six-column grid. Well IDs are case-insensitive.
+
+`apcs annotate template.gb --set cole1 --well a1 -o annotated-map` writes an annotated circular reference, a predicted indexed linear amplicon and an exact-map binding SVG. `apcs run` also writes a reference-evidence GenBank and an alignment-span track for every loaded well. Select a well in the HTML report for downloads. **These are annotated reference/prediction files, not read-derived consensuses.** Original features are preserved when supplied in GenBank; missing gene identities are not invented.
+
 ## How calls work
 
-Both indexes must be supported by primer-arm anchors near opposite read ends. The default allows one index substitution; shifted ties are rejected. It cannot guarantee recovery of index indels or prevent every assignment error after multiple index errors.
+Both indexes must be supported by primer-arm anchors near opposite read ends. The default requires exact six-base indexes; `--index-mismatch 1` explicitly enables one-substitution recovery. Actual aligned arm spans handle indels, and equal-best competing wells are rejected. No setting guarantees recovery of every error pattern or prevention of all cross-assignment.
 
-Related references are aligned as circular sequences. Diagnostic windows include substitutions and small indels; each allele is explicitly scored, and **each read contributes at most one reference vote**. Ties, identical references, and missing diagnostic coverage do not become confident construct calls. One related-backbone group plus unrelated alternatives is supported; partial homology and additional related groups can require separate panels.
+Related references are aligned as circular sequences. Diagnostic windows include substitutions and small indels, excluding the omitted gap and primer-overwritten arm bases; each allele is explicitly scored, and **each read contributes at most one reference vote**. Ties, identical references, and missing diagnostic coverage do not become confident construct calls. One related-backbone group plus unrelated alternatives is supported; partial homology and additional related groups can require separate panels.
 
 | Verdict | Meaning |
 |---|---|
@@ -100,4 +114,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). CI tests Python 3.10, 3.12 and 3.13 on L
 
 The ColE1 primer/index design and workflow inspiration are credited to Derek Sprayberry Aspacio's [pooledpremiumpcrpipeline2](https://github.com/daspacio9/pooledpremiumpcrpipeline2). Primer/index sequences were checked against its public source on 2026-11-16. This package uses minimap2 through `mappy` and Edlib; it does not run the upstream Snakemake/Medaka consensus pipeline. No head-to-head performance claim is made.
 
-Software and documentation: [MIT](LICENSE); upstream notice: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Aureka's name and logo identify the project; no trademark rights are granted. Public examples contain generated sequences and simulated images, with no internal plasmid maps or experimental sequencing files.
+Software and documentation: [MIT](LICENSE); upstream notice: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Aureka's name and logo identify the project; no trademark rights are granted. Examples contain generated reads/images and a separately labelled public pUC19 reference, with no internal plasmid maps or experimental sequencing files.
