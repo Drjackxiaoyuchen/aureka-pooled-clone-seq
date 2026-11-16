@@ -4,20 +4,22 @@
  "reads_total": 709,
  "reads_below_min_len": 12,
  "reads_considered": 697,
- "reads_assigned": 444,
- "assignment_rate": 0.637,
- "one_index_only": 212,
- "unassigned": 41,
+ "reads_assigned": 399,
+ "assignment_rate": 0.5725,
+ "one_index_only": 244,
+ "unassigned": 54,
  "impossible_pair": 0,
  "ambiguous": 0,
  "min_len": 1000,
  "arm_edits_allowed": 4,
- "index_mismatches_allowed": 1,
+ "index_mismatches_allowed": 0,
  "index_shift_allowed": 1,
+ "arm_matching": "edlib full-query alignment; variable aligned arm span",
+ "audit_file": "demux/read_assignments.tsv",
  "sentinel_wells_with_reads": [],
  "sentinel_reads": 0,
- "schema_version": 2,
- "software_version": "0.2.0",
+ "schema_version": 3,
+ "software_version": "0.3.0",
  "thresholds": {
   "min_depth": 8,
   "comfortable_depth": 15,
@@ -34,12 +36,13 @@
  "dependencies": {
   "mappy": "2.31",
   "edlib": "1.3.9.post1",
-  "numpy": "2.5.5"
+  "numpy": "2.5.5",
+  "biopython": "1.88"
  },
  "input_sha256": [
   {
    "file": "pool.fastq",
-   "sha256": "c854ea7b37babe2ca916101ce47c0362947fdc4b34d2ff7518887e26f81af58a"
+   "sha256": "8c7b34678acacfdd3cf5a106d03114bce804d3ed7ae0ad145f8ceb60d9990ea2"
   },
   {
    "file": "primer_sets.yaml",
@@ -55,13 +58,15 @@
   },
   {
    "file": "samples.csv",
-   "sha256": "287dac2aa23346cf019da92b8a62250e0f4668eb28fcf469bbfc2de5fc20414e"
+   "sha256": "b611e5f9c62cbd7725da8a6bbef83d8f6e2c842d862782544c843f13d9f10710"
   }
  ],
  "reference_names": [
   "ref_wanted",
   "ref_parent"
  ],
+ "primary_reference_observable_bp": 4880,
+ "primary_reference_primer_or_gap_masked_bp": 320,
  "template_checks": {
   "ref_wanted": {
    "set": "cole1",

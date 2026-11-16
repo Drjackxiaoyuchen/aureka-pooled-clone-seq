@@ -1,0 +1,31 @@
+{
+  "set": "cole1",
+  "length": 2686,
+  "n_fwd_sites": 1,
+  "n_rev_sites": 1,
+  "fwd_sites": [
+    [
+      2163,
+      "-"
+    ]
+  ],
+  "rev_sites": [
+    [
+      2459,
+      "+"
+    ]
+  ],
+  "amplicon_bp": 2457,
+  "blind_spot_bp": 274,
+  "ok": true,
+  "reason": "one predicted product of 2457 bp including tails; 2412 bp template span, 274 bp blind spot; wet-lab specificity untested",
+  "template_span_bp": 2412,
+  "fwd_start": 2162,
+  "fwd_strand": -1,
+  "rev_start": 2458,
+  "rev_strand": 1,
+  "fwd_arm_length": 22,
+  "rev_arm_length": 24,
+  "oriented_fstart": 502,
+  "gap_start": 2184
+}

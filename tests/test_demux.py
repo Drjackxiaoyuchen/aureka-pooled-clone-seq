@@ -34,7 +34,8 @@ def test_survives_one_substitution_in_the_index():
     ix = list(cfg.fwd_index["M544"])
     ix[2] = "A" if ix[2] != "A" else "T"
     seq = ps.handle_f + "".join(ix) + ps.arm_f + PLASMID + rc(ps.primer_r(cfg.rev_index["M547"]))
-    assert call_read(seq, ps, cfg).well == "c3"
+    assert call_read(seq, ps, cfg, index_mm=1).well == "c3"
+    assert call_read(seq, ps, cfg, index_mm=0).well is None
 
 
 def test_survives_a_deletion_inside_the_arm():
@@ -92,3 +93,39 @@ def test_unsafe_index_error_budget_and_existing_output_rejected(tmp_path):
     (tmp_path / 'old.fastq').write_text('old')
     with pytest.raises(ValueError):
         demux('missing', ps, cfg, tmp_path)
+
+
+@pytest.mark.parametrize('kind',['deletion','insertion','spaced_substitutions'])
+def test_reverse_arm_actual_alignment_span_controls_index_boundary(kind):
+    arm=rc(ps.arm_r)
+    if kind=='deletion': arm=arm[:8]+arm[10:]
+    elif kind=='insertion': arm=arm[:8]+'AG'+arm[8:]
+    else:
+        arm=list(arm)
+        for p in [2,8,14,20]: arm[p]='A' if arm[p]!='A' else 'C'
+        arm=''.join(arm)
+    seq=ps.primer_f(cfg.fwd_index['M544'])+PLASMID+arm+rc(cfg.rev_index['M547'])+rc(ps.handle_r)
+    call=call_read(seq,ps,cfg)
+    assert call.well=='c3'
+    assert call.rev_arm_end-call.rev_arm_start==len(arm)
+
+
+def test_equal_best_arm_index_pairs_are_ambiguous():
+    seq=ps.primer_f(cfg.fwd_index['M527'])+'ACGT'*4+ps.primer_f(cfg.fwd_index['M543'])+PLASMID+rc(ps.primer_r(cfg.rev_index['M528']))
+    assert call_read(seq,ps,cfg).status=='ambiguous'
+
+
+def test_streaming_output_accounts_for_short_reads_and_duplicate_ids(tmp_path):
+    import csv
+    from apcs.demux import demux
+    from apcs.seqio import write_fastq,read_fastq
+    seq=amplicon()
+    path=tmp_path/'pool.fastq'
+    write_fastq(path,[('a',seq,'I'*len(seq)),('b','ACGT','IIII')])
+    result=demux(path,ps,cfg,tmp_path/'out')
+    rows=list(csv.DictReader((tmp_path/'out/read_assignments.tsv').open(),delimiter='\t'))
+    assert len(rows)==2 and rows[1]['status']=='below_min_length'
+    assert len(list(read_fastq(tmp_path/'out/below_min_length.fastq')))==1
+    write_fastq(path,[('a',seq,'I'*len(seq)),('a',seq,'I'*len(seq))])
+    with pytest.raises(ValueError,match='duplicate FASTQ'):
+        demux(path,ps,cfg,tmp_path/'duplicate')

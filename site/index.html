@@ -19,14 +19,14 @@ section{margin:50px 0}pre{background:#251c44;color:#f2eef9;padding:24px;overflow
 @media(max-width:650px){main,header,footer{padding:24px}header{align-items:flex-start}header img{width:130px}nav{gap:10px;font-size:12px;flex-direction:column}.cards{grid-template-columns:1fr}.metrics div{padding:14px 10px}.metrics strong{font-size:24px}.metrics span{font-size:11px}.lead{font-size:18px}}
 </style></head>
 <body>
-<header><a href="./"><img src="assets/aureka-logo.png" alt="Aureka"></a><nav><a href="https://github.com/Drjackxiaoyuchen/aureka-pooled-clone-seq">GitHub repository ↗</a><a href="https://github.com/Drjackxiaoyuchen/aureka-pooled-clone-seq/blob/main/docs/01_bench_protocol.md">Bench guide</a></nav></header>
+<header><a href="./"><img src="assets/aureka-logo.png" alt="Aureka"></a><nav><a href="https://github.com/Drjackxiaoyuchen/aureka-pooled-clone-seq">GitHub repository ↗</a><a href="guide.html">Primers, mechanism and PCR QC</a></nav></header>
 <main>
 <div class="eyebrow">Aureka · Experimental research software</div>
 <h1>From pooled reads<br>to a plate you can inspect.</h1>
 <p class="lead">Demultiplex indexed colony-PCR reads, compare exact reference maps, and shortlist isolates for independent confirmation.</p>
-<div class="actions"><a class="button" href="demo/plate.html">Explore the example plate →</a><a class="button secondary" href="#reproduce">Run the demo locally</a></div>
+<div class="actions"><a class="button" href="demo/plate.html">Explore the example plate →</a><a class="button secondary" href="guide.html#order">ColE1 order list + well map</a></div>
 <div class="metrics"><div><strong>16</strong><span>loaded wells in this simulation</span></div><div><strong>48</strong><span>available index combinations</span></div><div><strong>100% simulated</strong><span>generated inputs and images</span></div></div>
-<section><span class="pill">Traceable evidence</span><h2 style="margin-top:16px">See what supports each call.</h2>
+<section><h2>Primer binding, mechanism and QC.</h2><p><a href="guide.html">Open the illustrated guide, exact ColE1 order list and annotated pUC19 files →</a></p><img src="pUC19/primer_binding.svg" alt="pUC19 ColE1 primer binding and predicted product" style="width:100%;border-radius:14px"></section><section><span class="pill">Traceable evidence</span><h2 style="margin-top:16px">See what supports each call.</h2>
 <div class="cards"><article class="card"><h3>Follow each molecule</h3><p>Keep both-index assignments, mapped reads and informative reference votes separate. Ties and missing evidence remain unanswered.</p></article><article class="card"><h3>Inspect every well</h3><p>Select a loaded well in the plate to see counts, reference support, alignment breadth and the reason for its verdict.</p></article><article class="card"><h3>Reproduce the report</h3><p>Generated truth labels, input hashes and thresholds accompany the results. Rebuild the same example from the public code.</p></article></div>
 <div class="downloads"><a href="demo/per_well.csv">Per-well CSV</a><a href="demo/run_stats.json">Run metadata</a><a href="demo/truth.csv">Simulation truth</a><a href="demo/00_PICK_THIS.md">Written report</a></div>
 </section>

@@ -87,6 +87,8 @@ def load_config(path: str | None = None) -> Config:
             raise ValueError(f"invalid plate {key} or {labels}")
     if any(len(str(x)) != 1 or not str(x).isalpha() for x in p["row_labels"]):
         raise ValueError("row labels must be single letters")
+    if any(not str(x).isdigit() or int(x) < 1 for x in p['column_labels']):
+        raise ValueError('column labels must be positive integers')
     for ps in sets.values():
         if any(not s or set(s) - set("ACGT") for s in (ps.arm_f, ps.arm_r, ps.handle_f, ps.handle_r)):
             raise ValueError("primer arms and handles must be uppercase A/C/G/T DNA")

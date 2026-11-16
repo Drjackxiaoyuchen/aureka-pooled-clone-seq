@@ -23,5 +23,5 @@ jobs:
       - run: python -m build
       - uses: actions/upload-artifact@v4
         with:
-          name: synthetic-report-python-${{ matrix.python-version }}
-          path: /tmp/apcs-demo/sequencing/result/report
+          name: synthetic-screen-output-python-${{ matrix.python-version }}
+          path: /tmp/apcs-demo/sequencing/result

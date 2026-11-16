@@ -10,6 +10,7 @@ from collections import Counter, defaultdict
 import edlib
 import mappy
 from .seqio import load_reference, rc
+from .primersets import check_template
 
 SIMILAR_FRAC = 0.80
 
@@ -40,7 +41,7 @@ def _breadth(intervals, n):
 
 
 class RefPanel:
-    def __init__(self, paths, preset="map-ont"):
+    def __init__(self, paths, preset="map-ont", primer_set=None):
         self.paths = list(paths)
         if not self.paths:
             raise ValueError("at least one reference is required")
@@ -56,8 +57,21 @@ class RefPanel:
             self.seqs[name], self.lengths[name] = seq, len(seq)
             self.aligners[name] = mappy.Aligner(seq=seq + seq, preset=preset, best_n=20)
         self.primary = self.names[0]
+        n=self.lengths[self.primary]
+        self.observable=set(range(n))
+        if primer_set is not None:
+            check=check_template(self.seqs[self.primary],primer_set)
+            if not check['ok']:
+                raise ValueError('primary reference has no unique exact primer layout; check the exact map and primer set first')
+            fp,fs=check['fwd_sites'][0];rp,rs=check['rev_sites'][0]
+            gap_start=(rp-1+len(primer_set.arm_r))%n if fs=='+' else (fp-1+len(primer_set.arm_f))%n
+            excluded={(gap_start+k)%n for k in range(check['blind_spot_bp'])}
+            excluded.update((fp-1+k)%n for k in range(len(primer_set.arm_f)))
+            excluded.update((rp-1+k)%n for k in range(len(primer_set.arm_r)))
+            self.observable-=excluded
         self.posmap, self.oriented = {}, {}
         self.similar, self.sites = self._diagnostics()
+        self.sites=[p for p in self.sites if p in self.observable]
         other = [name for name in self.names if name not in self.similar]
         for i, a in enumerate(other):
             for b in other[i + 1:]:
@@ -116,17 +130,25 @@ class RefPanel:
             return []
         groups = [[self.sites[0]]]
         for pos in self.sites[1:]:
-            if pos - groups[-1][-1] <= gap:
+            if (pos - groups[-1][-1] <= gap
+                    and all(p in self.observable for p in range(groups[-1][-1],pos+1))):
                 groups[-1].append(pos)
             else:
                 groups.append([pos])
         n = self.lengths[self.primary]
-        if len(groups) > 1 and groups[0][0] + n - groups[-1][-1] <= gap:
+        if (len(groups) > 1 and groups[0][0] + n - groups[-1][-1] <= gap
+                and all(p%n in self.observable for p in range(groups[-1][-1],groups[0][0]+n+1))):
             groups[0] = groups[-1] + [p + n for p in groups[0]]
             groups.pop()
         clusters = []
         for group in groups:
-            lo, hi = group[0] - pad, group[-1] + pad + 1
+            lo,hi=group[0],group[-1]+1
+            for _ in range(pad):
+                if (lo-1)%n not in self.observable: break
+                lo-=1
+            for _ in range(pad):
+                if hi%n not in self.observable: break
+                hi+=1
             if hi - lo > n:
                 lo, hi = 0, n
             alleles = {}
@@ -239,4 +261,5 @@ def genotype_well(reads, panel: RefPanel, min_read_len=1000):
         "second_ref": second_ref, "second_n": second_n,
         "purity": round(best_n / informative, 4) if informative else 0.0,
         "has_alternatives": len(panel.names) > 1,
+        "alignment_intervals": intervals,
     }

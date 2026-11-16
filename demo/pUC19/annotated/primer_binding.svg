@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="510" viewBox="0 0 1100 510">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#33266C"/></marker></defs>
+<rect width="1100" height="510" rx="16" fill="#F7F6FB"/><g font-family="Arial,sans-serif" fill="#33266C">
+<text x="35" y="40" font-size="25" font-weight="bold">Exact-template primer binding</text>
+<circle cx="270" cy="245" r="155" fill="none" stroke="#E6E1EF" stroke-width="13"/><path d="M 191.20 111.53 A 155 155 0 1 1 127.03 185.14" stroke="#6FC0A9" stroke-width="13" fill="none"/><path d="M 127.03 185.14 A 155 155 0 0 1 191.20 111.53" stroke="#CF6B4D" stroke-width="13" fill="none"/><path d="M106.9,181.6 L490,150" stroke="#4200AC" fill="none"/><text x="515" y="144" fill="#4200AC" font-size="22" font-weight="bold">FWD arm: 2163–2184 (−)</text><path d="M106.9,181.6 L101.1,199.1" stroke="#4200AC" stroke-width="4" marker-end="url(#arrow)"/><path d="M185.3,91.9 L490,245" stroke="#247C68" fill="none"/><text x="515" y="239" fill="#247C68" font-size="22" font-weight="bold">REV arm: 2459–2482 (+)</text><path d="M185.3,91.9 L201.9,83.8" stroke="#247C68" stroke-width="4" marker-end="url(#arrow)"/>
+<text x="270" y="235" text-anchor="middle" font-size="22">M77789.2</text><text x="270" y="269" text-anchor="middle" font-size="24" font-weight="bold">2,686 bp</text>
+<text x="515" y="335" font-size="20">Omitted gap: 274 bp</text><text x="515" y="370" font-size="20">Predicted indexed product: 2,457 bp</text>
+<text x="35" y="455" font-size="17">Mint: template sequence included in product. Orange: omitted gap. Arrows: extension direction.</text>
+<text x="35" y="485" font-size="16">Positions are 1-based on this exact map. Binding-arm sequence is also primer-derived; the map is not a consensus.</text></g></svg>

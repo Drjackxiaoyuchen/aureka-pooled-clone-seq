@@ -1,6 +1,7 @@
 include README.md LICENSE THIRD_PARTY_NOTICES.md CONTRIBUTING.md requirements.txt
-recursive-include assets *.png
+recursive-include assets *.png *.svg
 recursive-include docs *.md
-recursive-include demo *.py *.csv *.fa *.json *.png *.md *.html *.txt
+recursive-include demo *.py *.csv *.fa *.json *.png *.svg *.gb *.bedgraph *.tsv *.md *.html *.txt
+recursive-include primers *.csv *.xlsx *.txt *.md
 recursive-include scripts *.py
 recursive-include site *.html

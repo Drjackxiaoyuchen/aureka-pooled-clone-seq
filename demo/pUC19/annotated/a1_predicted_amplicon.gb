@@ -1,0 +1,119 @@
+LOCUS       a1_amplicon             2457 bp    DNA     linear   UNK 01-JAN-1980
+DEFINITION  PREDICTED indexed amplicon from M77789.2; not read-derived
+            consensus.
+ACCESSION   a1_predicted_amp
+VERSION     a1_predicted_amp
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+COMMENT     Predicted from the supplied map and cole1 M527/M528 oligos. No
+            consensus inference.
+FEATURES             Location/Qualifiers
+     misc_feature    join(24..1523,2208..2435)
+                     /note="pBR322"
+                     /note="Projected from supplied reference onto predicted
+                     amplicon."
+                     /note="Partial: original feature intersects omitted
+                     sequence."
+     misc_feature    1524..1660
+                     /note="pBR322"
+                     /note="Projected from supplied reference onto predicted
+                     amplicon."
+     misc_feature    1661..1760
+                     /note="pBR322"
+                     /note="Projected from supplied reference onto predicted
+                     amplicon."
+     misc_feature    complement(1761..2207)
+                     /note="M13mp19"
+                     /note="Projected from supplied reference onto predicted
+                     amplicon."
+     misc_feature    complement(1761..1918)
+                     /note="Lac-Operon"
+                     /note="Projected from supplied reference onto predicted
+                     amplicon."
+     misc_feature    complement(1919..1975)
+                     /note="polylinker of M13mp19;
+                     HindIII-SphI-PstI-SalI-XbaI-BamHI-SmaI-KpnI-SacI-EcoRI"
+                     /note="Projected from supplied reference onto predicted
+                     amplicon."
+     misc_feature    complement(1978..2207)
+                     /note="Lac-operon"
+                     /note="Projected from supplied reference onto predicted
+                     amplicon."
+     misc_feature    1..17
+                     /label="forward_handle"
+                     /note="Primer-derived sequence; predicted oligo
+                     architecture. Coordinates refer to this linear amplicon."
+     misc_feature    18..23
+                     /label="forward_index_M527"
+                     /note="Primer-derived sequence; predicted oligo
+                     architecture. Coordinates refer to this linear amplicon."
+     misc_feature    24..45
+                     /label="forward_arm_primer_derived"
+                     /note="Primer-derived sequence; predicted oligo
+                     architecture. Coordinates refer to this linear amplicon."
+     misc_feature    complement(2412..2435)
+                     /label="reverse_arm_primer_derived"
+                     /note="Primer-derived sequence; predicted oligo
+                     architecture. Coordinates refer to this linear amplicon."
+     misc_feature    complement(2436..2441)
+                     /label="reverse_index_M528"
+                     /note="Primer-derived sequence; predicted oligo
+                     architecture. Coordinates refer to this linear amplicon."
+     misc_feature    complement(2442..2457)
+                     /label="reverse_handle"
+                     /note="Primer-derived sequence; predicted oligo
+                     architecture. Coordinates refer to this linear amplicon."
+     primer_bind     1..45
+                     /label="cole1-F-M527"
+                     /note="Full forward oligo, including non-template 5-prime
+                     tail."
+                     /sequence="ACACTCTTTCCCTACACGAAGTCCGGTAAGACACGACTTATCGCC"
+     primer_bind     complement(2412..2457)
+                     /label="cole1-R-M528"
+                     /note="Full reverse oligo in synthesis orientation."
+                     /sequence="GACTGGAGTTCAGACGATACGTGCGTCGATTTTTGTGATGCTCGTC"
+ORIGIN
+        1 acactctttc cctacacgaa gtccggtaag acacgactta tcgccactgg cagcagccac
+       61 tggtaacagg attagcagag cgaggtatgt aggcggtgct acagagttct tgaagtggtg
+      121 gcctaactac ggctacacta gaagaacagt atttggtatc tgcgctctgc tgaagccagt
+      181 taccttcgga aaaagagttg gtagctcttg atccggcaaa caaaccaccg ctggtagcgg
+      241 tggttttttt gtttgcaagc agcagattac gcgcagaaaa aaaggatctc aagaagatcc
+      301 tttgatcttt tctacggggt ctgacgctca gtggaacgaa aactcacgtt aagggatttt
+      361 ggtcatgaga ttatcaaaaa ggatcttcac ctagatcctt ttaaattaaa aatgaagttt
+      421 taaatcaatc taaagtatat atgagtaaac ttggtctgac agttaccaat gcttaatcag
+      481 tgaggcacct atctcagcga tctgtctatt tcgttcatcc atagttgcct gactccccgt
+      541 cgtgtagata actacgatac gggagggctt accatctggc cccagtgctg caatgatacc
+      601 gcgagaccca cgctcaccgg ctccagattt atcagcaata aaccagccag ccggaagggc
+      661 cgagcgcaga agtggtcctg caactttatc cgcctccatc cagtctatta attgttgccg
+      721 ggaagctaga gtaagtagtt cgccagttaa tagtttgcgc aacgttgttg ccattgctac
+      781 aggcatcgtg gtgtcacgct cgtcgtttgg tatggcttca ttcagctccg gttcccaacg
+      841 atcaaggcga gttacatgat cccccatgtt gtgcaaaaaa gcggttagct ccttcggtcc
+      901 tccgatcgtt gtcagaagta agttggccgc agtgttatca ctcatggtta tggcagcact
+      961 gcataattct cttactgtca tgccatccgt aagatgcttt tctgtgactg gtgagtactc
+     1021 aaccaagtca ttctgagaat agtgtatgcg gcgaccgagt tgctcttgcc cggcgtcaat
+     1081 acgggataat accgcgccac atagcagaac tttaaaagtg ctcatcattg gaaaacgttc
+     1141 ttcggggcga aaactctcaa ggatcttacc gctgttgaga tccagttcga tgtaacccac
+     1201 tcgtgcaccc aactgatctt cagcatcttt tactttcacc agcgtttctg ggtgagcaaa
+     1261 aacaggaagg caaaatgccg caaaaaaggg aataagggcg acacggaaat gttgaatact
+     1321 catactcttc ctttttcaat attattgaag catttatcag ggttattgtc tcatgagcgg
+     1381 atacatattt gaatgtattt agaaaaataa acaaataggg gttccgcgca catttccccg
+     1441 aaaagtgcca cctgacgtct aagaaaccat tattatcatg acattaacct ataaaaatag
+     1501 gcgtatcacg aggccctttc gtctcgcgcg tttcggtgat gacggtgaaa acctctgaca
+     1561 catgcagctc ccggagacgg tcacagcttg tctgtaagcg gatgccggga gcagacaagc
+     1621 ccgtcagggc gcgtcagcgg gtgttggcgg gtgtcggggc tggcttaact atgcggcatc
+     1681 agagcagatt gtactgagag tgcaccatat gcggtgtgaa ataccgcaca gatgcgtaag
+     1741 gagaaaatac cgcatcaggc gccattcgcc attcaggctg cgcaactgtt gggaagggcg
+     1801 atcggtgcgg gcctcttcgc tattacgcca gctggcgaaa gggggatgtg ctgcaaggcg
+     1861 attaagttgg gtaacgccag ggttttccca gtcacgacgt tgtaaaacga cggccagtga
+     1921 attcgagctc ggtacccggg gatcctctag agtcgacctg caggcatgca agcttggcgt
+     1981 aatcatggtc atagctgttt cctgtgtgaa attgttatcc gctcacaatt ccacacaaca
+     2041 tacgagccgg aagcataaag tgtaaagcct ggggtgccta atgagtgagc taactcacat
+     2101 taattgcgtt gcgctcactg cccgctttcc agtcgggaaa cctgtcgtgc cagctgcatt
+     2161 aatgaatcgg ccaacgcgcg gggagaggcg gtttgcgtat tgggcgctct tccgcttcct
+     2221 cgctcactga ctcgctgcgc tcggtcgttc ggctgcggcg agcggtatca gctcactcaa
+     2281 aggcggtaat acggttatcc acagaatcag gggataacgc aggaaagaac atgtgagcaa
+     2341 aaggccagca aaaggccagg aaccgtaaaa aggccgcgtt gctggcgttt ttccataggc
+     2401 tccgcccccc tgacgagcat cacaaaaatc gacgcacgta tcgtctgaac tccagtc
+//

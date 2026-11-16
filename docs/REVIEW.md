@@ -1,3 +1,9 @@
+# Current release: version 0.3.0
+
+The follow-up review added illustrated primer binding and PCR QC guides, a 12-primer ColE1 order workbook, the preferred four-column layout, standalone reference-free demultiplexing, per-read traceability and clearly labelled GenBank exports. **84 regression tests passed locally on Python 3.12**, and both synthetic examples and the standalone demultiplex command passed. See the [v0.3 review](09_DEMULTIPLEX_REVIEW.md) for the arm-span fix, stricter index default, assay-region masking and assignment-label comparisons. This remains an experimental screen requiring independent plasmid confirmation.
+
+## Archived initial release review (v0.2.0)
+
 # Public-release review · 2026-11-16
 
 The supplied prototype was reviewed in a separate workspace; the original download was retained. Version 0.2.0 is a corrected experimental software release, not certification of the wet-lab workflow.

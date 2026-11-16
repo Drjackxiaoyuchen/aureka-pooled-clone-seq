@@ -16,14 +16,14 @@ def run(*args):
 def verify(report):
     with (report / 'per_well.csv').open() as fh:
         rows = {r['well']: r for r in csv.DictReader(fh)}
-    good = ['a1','a2','a3','a4','a5','a6','b1','b2','b3']
+    good = ['a1','a2','a3','a4','b1','b2','b3','b4','c1']
     for well in good:
         assert rows[well]['verdict'] in {'PICK', 'PICK (low depth)', 'BACKUP', 'SPARE'}, rows[well]
         assert rows[well]['best_ref'] == 'ref_wanted', rows[well]
-    for well in ['b4','b5','b6','c4']:
+    for well in ['c2','c3','c4','d4']:
         assert rows[well]['verdict'] == 'WRONG CONSTRUCT', rows[well]
-    assert rows['c1']['verdict'] == 'MIXED - DISCARD', rows['c1']
-    for well in ['c2','c3']:
+    assert rows['d1']['verdict'] == 'MIXED - DISCARD', rows['d1']
+    for well in ['d2','d3']:
         assert rows[well]['verdict'] == 'NO CALL', rows[well]
     assert all(r['verdict'] == 'NOT USED' for r in rows.values() if r['in_use'] == 'False')
 

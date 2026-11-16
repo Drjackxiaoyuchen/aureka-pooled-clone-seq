@@ -39,6 +39,7 @@ def _read_samples(path, cfg):
             if None in r:
                 raise ValueError("samples.csv row has too many columns")
             r = {k.strip().lower(): (v or "").strip() for k, v in r.items()}
+            r['well'] = r.get('well', '').lower()
             if not r.get("well"):
                 if any(r.values()):
                     raise ValueError("samples.csv contains a nonempty row without a well")
@@ -85,7 +86,7 @@ def cmd_plan(a):
     if a.n < 1 or a.n > len(wells):
         sys.exit(f"{a.n} clones but only {len(wells)} index combinations exist in this plate")
     if a.wells:
-        want = [w.strip() for w in a.wells.split(",") if w.strip()]
+        want = [w.strip().lower() for w in a.wells.split(",") if w.strip()]
         known = {w: (f, r) for w, f, r in wells}
         bad = [w for w in want if w not in known]
         if bad:
@@ -93,6 +94,11 @@ def cmd_plan(a):
         if len(want) != a.n or len(set(want)) != len(want):
             raise ValueError("--wells must list exactly -n distinct positions")
         chosen = [(w, *known[w]) for w in want]
+    elif a.layout == 'four-column':
+        grid = [(w, f, r) for w, f, r in wells if cfg.column_labels.index(w[1:]) < 4]
+        if a.n > len(grid):
+            raise ValueError(f'four-column layout holds {len(grid)} wells; use --layout row for the full grid')
+        chosen = grid[:a.n]
     elif a.layout == "block":
         nr, nc = _block(cfg, a.n)
         grid = [(w, f, r) for w, f, r in wells
@@ -124,7 +130,7 @@ def cmd_plan(a):
         "",
         "## Bench order",
         "",
-        "1. Colony PCR, one colony per well, with that well's primer pair. 25 uL is plenty.",
+        "1. Colony PCR, one colony per well, with that well's primer pair and a validated enzyme protocol.",
         "2. Run every well on a gel. `apcs gel` sizes the bands and tells you which wells to drop",
         "   and how many uL of each to pool.",
         "3. Pool only the wells that passed. Clean up the pool once.",
@@ -146,6 +152,8 @@ def cmd_order(a):
     cfg = _cfg(a)
     ps = _set(cfg, a.set)
     rows = order_mod.rows_for(ps, cfg, scale=a.scale, purification=a.purification)
+    keep = set(cfg.columns[:a.columns])
+    rows = [r for r in rows if r['direction'] == 'forward' or r['index'] in keep]
     os.makedirs(a.out, exist_ok=True)
     csv_path = os.path.join(a.out, f"order_{ps.name}_primers.csv")
     order_mod.write_csv(csv_path, rows)
@@ -193,7 +201,45 @@ def cmd_indexqc(a):
         for a_, b_, h, l in d["closest"][:4]:
             print(f"    closest: {a_} {ix[a_]} vs {b_} {ix[b_]}  H{h}/L{l}")
     print("\nAn index set with min distance 3 resolves one error and can mis-call at two.")
-    print("Keep the demultiplexer at --index-mismatch 1.")
+    print('Default: --index-mismatch 0 (exact indexes). Use 1 only as an explicit recovery mode with controls.')
+
+
+def cmd_annotate(a):
+    from .annotate import export_one
+    cfg=_cfg(a);ps=_set(cfg,a.set)
+    if os.path.exists(a.out) and os.listdir(a.out):
+        raise ValueError('annotation output is not empty; choose a fresh directory')
+    _,g=export_one(a.reference,ps,cfg,a.out,well=a.well.lower())
+    print(f"{g['amplicon_bp']} bp predicted indexed product; {g['blind_spot_bp']} bp omitted gap")
+    print(f'Reference GenBank, predicted amplicon GenBank and binding diagram: {a.out}')
+
+
+def cmd_demux(a):
+    from .demux import demux
+    from .primersets import default_yaml
+    from importlib.metadata import version
+    import hashlib
+    cfg=_cfg(a);ps=_set(cfg,a.set)
+    samples=_read_samples(a.samples,cfg) if a.samples else None
+    used=[s['well'] for s in samples] if samples is not None else None
+    result=demux(a.fastq,ps,cfg,os.path.join(a.out,'demux'),min_len=a.min_len,
+                 arm_mm=a.arm_mismatch,index_mm=a.index_mismatch,index_shift=a.index_shift,used_wells=used)
+    manifest=[]
+    for path in [a.fastq,a.primer_yaml or default_yaml()]+([a.samples] if a.samples else []):
+        digest=hashlib.sha256()
+        with open(path,'rb') as fh:
+            for block in iter(lambda:fh.read(1024*1024),b''):digest.update(block)
+        manifest.append({'file':os.path.basename(path),'sha256':digest.hexdigest()})
+    result['run'].update(schema_version=3,software_version=__version__,input_sha256=manifest,
+                         dependencies={name:version(name) for name in ['edlib','pyyaml']})
+    with open(os.path.join(a.out,'demux_stats.json'),'w') as fh:json.dump(result['run'],fh,indent=2)
+    labels={s['well']:s.get('sample','') for s in samples} if samples else {}
+    with open(os.path.join(a.out,'demux_counts.csv'),'w',newline='') as fh:
+        writer=csv.DictWriter(fh,fieldnames=['well','sample','n_reads','median_len','max_len','in_use'])
+        writer.writeheader()
+        for row in result['per_well']:writer.writerow(dict(row,sample=labels.get(row['well'],'')))
+    print(f"Demultiplexed {result['run']['reads_assigned']}/{result['run']['reads_considered']} considered reads. No reference or genotype inference performed.")
+    print(f'FASTQ bins and read audit: {a.out}/demux; counts: {a.out}/demux_counts.csv')
 
 
 # ---------------------------------------------------------------------- gel
@@ -250,7 +296,7 @@ def cmd_run(a):
     refs = expected_paths + other_paths
     if not refs:
         sys.exit("give at least one --expect reference (GenBank or FASTA)")
-    panel = RefPanel(refs)
+    panel = RefPanel(refs,primer_set=ps)
     expected_names = panel.names[:len(expected_paths)]
     default_expect = ', '.join(expected_names)
     for well, name in expected_by_well.items():
@@ -278,10 +324,12 @@ def cmd_run(a):
         return h.hexdigest()
     from .primersets import default_yaml
     paths = [a.fastq, a.primer_yaml or default_yaml()] + refs + ([a.samples] if a.samples else [])
-    run.update(schema_version=2, software_version=__version__, thresholds=thresholds,
-               dependencies={name: version(name) for name in ('mappy', 'edlib', 'numpy')},
+    run.update(schema_version=3, software_version=__version__, thresholds=thresholds,
+               dependencies={name: version(name) for name in ('mappy', 'edlib', 'numpy','biopython')},
                input_sha256=[{'file': os.path.basename(p), 'sha256': digest(p)} for p in paths],
                reference_names=panel.names,
+               primary_reference_observable_bp=len(panel.observable),
+               primary_reference_primer_or_gap_masked_bp=panel.lengths[panel.primary]-len(panel.observable),
                template_checks={name: check_template(panel.seqs[name], ps) for name in panel.names})
 
     wells = []
@@ -304,6 +352,8 @@ def cmd_run(a):
     rank_and_label([w for w in wells if w.get("in_use", True)], thresholds)
     for w in wells:
         w.setdefault("rank", None)
+    from .annotate import export_run
+    export_run(refs,panel,ps,cfg,wells,os.path.join(outdir,'annotations'),a.min_depth)
 
     meta = {
         "title": a.title or f"{os.path.basename(a.fastq)} - pooled clone screen",
@@ -315,7 +365,11 @@ def cmd_run(a):
         "footer": f"Aureka APCS {__version__} · {ps.name} arms · min_len {a.min_len}, "
                   f"index mismatches {a.index_mismatch}",
     }
-    picks = write_report(os.path.join(outdir, "report"), cfg, wells, run, meta)
+    from dataclasses import replace
+    four_column = samples is not None and all(cfg.column_labels.index(w[1:])<4 for w in used)
+    report_cfg = replace(cfg,columns=cfg.columns[:4],column_labels=cfg.column_labels[:4]) if four_column else cfg
+    meta['footer'] += ' · All 48 index bins remain in CSV/audit; the preferred view uses columns 1–4.' if four_column else ''
+    picks = write_report(os.path.join(outdir, "report"), report_cfg, wells, run, meta)
     print(f"\npick: {', '.join(w['well'] for w in picks) or 'nothing cleared the gate'}")
     print(f"report: {outdir}/report/00_PICK_THIS.md  and  plate.html")
 
@@ -332,14 +386,16 @@ def build_parser():
     q = sub.add_parser("plan", help="assign clones to wells and print the bench checklist")
     q.add_argument("-n", type=int, required=True, help="how many clones")
     q.add_argument("--set", default="cole1")
-    q.add_argument("--layout", choices=["block", "row"], default="block",
-                   help="block (default) uses the fewest primer tubes")
+    q.add_argument("--layout", choices=["four-column", "block", "row"], default="four-column",
+                   help="default: a1–a4, b1–b4, ... h1–h4; row enables all six columns")
     q.add_argument("--wells", default=None, help="explicit comma separated wells, e.g. a1,a2,b1")
     q.add_argument("-o", "--out", default="plan")
     q.set_defaults(func=cmd_plan)
 
     q = sub.add_parser("order", help="oligo order sheet for a primer set")
-    q.add_argument("--set", default="ampr")
+    q.add_argument("--set", default="cole1")
+    q.add_argument('--columns', type=int, choices=[4,6], default=4,
+                   help='four columns require 12 oligos; six require 14')
     q.add_argument("--scale", default="10 nmol")
     q.add_argument("--purification", default="PAGE")
     q.add_argument("-o", "--out", default="orders")
@@ -353,6 +409,24 @@ def build_parser():
 
     q = sub.add_parser("indexqc", help="index set distances and the safe error budget")
     q.set_defaults(func=cmd_indexqc)
+
+    q=sub.add_parser('annotate',help='annotated template and predicted indexed amplicon GenBank files')
+    q.add_argument('reference')
+    q.add_argument('--set',default='cole1')
+    q.add_argument('--well',default='a1')
+    q.add_argument('-o','--out',default='annotated-map')
+    q.set_defaults(func=cmd_annotate)
+
+    q=sub.add_parser('demux',help='separate reads by well without reference maps')
+    q.add_argument('fastq')
+    q.add_argument('--set',default='cole1')
+    q.add_argument('--samples',default=None)
+    q.add_argument('--min-len',type=int,default=1000)
+    q.add_argument('--arm-edit',type=int,default=4,dest='arm_mismatch')
+    q.add_argument('--index-mismatch',type=int,default=0)
+    q.add_argument('--index-shift',type=int,default=1)
+    q.add_argument('-o','--out',default='demux-result')
+    q.set_defaults(func=cmd_demux)
 
     q = sub.add_parser("gel", help="colony-PCR gel QC and pooling volumes")
     q.add_argument("image")
@@ -380,7 +454,8 @@ def build_parser():
     q.add_argument("--min-depth", type=int, default=8)
     q.add_argument("--arm-edit", type=int, default=4, dest="arm_mismatch",
                    help="edit distance allowed when matching the primer arm")
-    q.add_argument("--index-mismatch", type=int, default=1)
+    q.add_argument("--index-mismatch", type=int, default=0,
+                   help='0: exact index match (default); 1: opt-in one-substitution recovery')
     q.add_argument("--index-shift", type=int, default=1,
                    help="indel slack when locating the index next to the arm")
     q.add_argument("--picks", type=int, default=2)

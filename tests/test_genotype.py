@@ -105,3 +105,21 @@ def test_coverage_does_not_confuse_zero_length_and_full_circle():
     assert _breadth([(20, 20)], 100) == 0
     assert _breadth([(90, 110), (0, 30)], 100) == 40
     assert _breadth([(20, 120)], 100) == 100
+
+
+@pytest.mark.parametrize('variant',['primer_arm','omitted_gap'])
+def test_assay_cannot_discriminate_original_bases_overwritten_or_omitted(tmp_path,variant):
+    from apcs.primersets import load_config
+    ps=load_config().sets['cole1']
+    body=dna(4000,20)
+    a=rc(ps.arm_r)+dna(274,21)+ps.arm_f+body
+    p=100 if variant=='omitted_gap' else len(ps.arm_r)+274+4
+    b=a[:p]+('A' if a[p]!='A' else 'C')+a[p+1:]
+    paths=[]
+    for name,s in [('want',a),('parent',b)]:
+        path=tmp_path/f'{name}.fa';path.write_text(f'>{name}\n{s}\n');paths.append(path)
+    panel=RefPanel(paths,primer_set=ps)
+    assert not panel.sites and not panel.clusters
+    amp=ps.arm_f+body+rc(ps.arm_r)
+    g=genotype_well(reads([amp]*20),panel)
+    assert g['best_ref'] is None and call_well(g,'want')[0]=='NO CALL'

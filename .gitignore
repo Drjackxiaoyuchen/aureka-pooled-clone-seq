@@ -12,7 +12,9 @@ result/demux/
 *.fq.gz
 demo-output*/
 _site/
+_site*/
 runs/
+outputs/
 .ruff_cache/
 *.log
 .DS_Store

@@ -59,7 +59,7 @@ def main(outdir=None):
     open(os.path.join(outdir, "ref_wanted.fa"), "w").write(">ref_wanted\n" + wanted + "\n")
     open(os.path.join(outdir, "ref_parent.fa"), "w").write(">ref_parent\n" + parent + "\n")
 
-    wells = list(cfg.wells())[:16]
+    wells = [(w,f,r) for w,f,r in cfg.wells() if cfg.column_labels.index(w[1:]) < 4][:16]
     plan = {}
     for i, (w, f, r) in enumerate(wells):
         if i < 9:
