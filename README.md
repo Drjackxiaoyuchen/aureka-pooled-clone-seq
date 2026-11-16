@@ -6,22 +6,20 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-4200AC.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6FC0A9.svg)](pyproject.toml)
 
-Screen indexed colony-PCR amplicons from a pooled long-read FASTQ and produce an interactive, printable plate report. The default design provides **48 index combinations from 14 oligos** (8 forward × 6 reverse). Achievable multiplexing depends on PCR, pooling and informative sequencing yield.
+Screen indexed colony-PCR amplicons from a pooled long-read FASTQ and produce an interactive, printable plate report. The preferred layout provides **32 positions from 12 oligos** (8 forward × 4 reverse); the full catalog provides 48 combinations from 14 oligos. Achievable multiplexing depends on PCR, pooling and informative sequencing yield.
 
 **[Open the synthetic demo](https://drjackxiaoyuchen.github.io/aureka-pooled-clone-seq/)** · [Bench guide](docs/01_bench_protocol.md) · [中文流程](docs/01_bench_protocol_zh.md) · [Review and limitations](docs/REVIEW.md)
 
 **Order ColE1 now:** [12 required sequences](primers/ColE1_ORDER_32well.txt) · [Excel order + A1–H4 well map](primers/Aureka_ColE1_32well_Order.xlsx).
 The preferred layout is **A1–A4, B1–B4, … H1–H4**: eight forward and four reverse oligos. The final two reverse oligos in the workbook are optional expansion to columns 5–6.
 
-![Primer architecture](assets/graphics/primer_architecture.svg)
+[![Forward and reverse ColE1 oligos, with the handle, six-base index and template-binding arm shown separately](assets/graphics/primer_architecture.png)](assets/graphics/primer_architecture.svg)
+
+Only the 3′ arm binds the original template. The 5′ handle and index are incorporated into the PCR product; both end indexes identify the source well. Figures link to their editable SVG versions.
 
 [Binding sites and mechanism](docs/06_MECHANISM_AND_BINDING.md) · [PCR QC guide](docs/07_PCR_QC_GUIDE.md) · [Output and annotated GenBank guide](docs/08_OUTPUTS_AND_GENBANK.md) · [v0.3 demultiplexing review](docs/09_DEMULTIPLEX_REVIEW.md)
 
-```text
-Check exact templates → assign colonies → indexed PCR → review gel / quantify
-    → pool compatible amplicons → end-preserving long-read sequencing
-    → demultiplex → compare references → inspect plate → confirm an isolate
-```
+[![Six-step workflow: check the template, index individual wells, review and pool, sequence intact ends, separate reads, and inspect per-well outputs](assets/graphics/workflow_overview.png)](assets/graphics/workflow_overview.svg)
 
 This is an experimental **reference-discrimination screen**. It does not assemble a consensus, discover novel mutations, or certify a plasmid sequence. A `PICK` is a candidate for independent confirmation. The AmpR primer set is a proposed, unvalidated design.
 
@@ -49,7 +47,17 @@ Open `demo-output/sequencing/result/report/plate.html`. Select a well to see ass
 
 The seeded simulation contains 16 loaded wells: nine adequately covered wanted constructs, four parental constructs, one 50/50 input mixture, one low-depth well, and one empty well. The verifier checks every loaded well's outcome, not merely the presence of a `PICK`. A second simulated gel demonstrates size checks, multiple bands, no band, clipping and a pooling-volume cap. **All demo results are simulated; they are not a wet-lab performance benchmark.** Generated example outputs are in [demo/synthetic/result/report](demo/synthetic/result/report/00_PICK_THIS.md).
 
+[![Actual committed synthetic plate results, per-well assigned and informative counts, and example GenBank feature locations](assets/graphics/demultiplex_output_preview.png)](assets/graphics/demultiplex_output_preview.svg)
+
+The preview is generated from the committed CSV and annotated GenBank output. Explore the [interactive plate](https://drjackxiaoyuchen.github.io/aureka-pooled-clone-seq/demo/plate.html), [per-well CSV](demo/synthetic/result/report/per_well.csv), [A1 reference-evidence GenBank](demo/synthetic/result/annotations/wells/a1.reference_evidence.gb), and [predicted A1 amplicon](demo/synthetic/result/annotations/wells/a1.predicted_amplicon.gb). Reference-evidence and predicted-product files are not read-derived consensuses.
+
 ## Use your own data
+
+### Match each well to its two oligos
+
+[![A1–A4 through H1–H4, showing the exact forward and reverse primer identities for all 32 positions](assets/graphics/plate_32well.png)](assets/graphics/plate_32well.svg)
+
+Each well receives its row's forward oligo and its column's reverse oligo. Products are pooled after individual PCR and QC. For 30 colonies, the final two loaded positions are H1 and H2.
 
 ```bash
 # Check compatibility for EACH exact circular plasmid sequence.
@@ -73,6 +81,12 @@ apcs run pool.fastq.gz --samples my-plan/samples.csv --set cole1 \
   --expect wanted.gb --also parent.gb -o my-screen
 ```
 
+### Check the PCR products before pooling
+
+[![PCR QC checkpoints and illustrative gel lanes for a single expected band, no band, wrong size, multiple bands and clipping](assets/graphics/pcr_qc_guide.png)](assets/graphics/pcr_qc_guide.svg)
+
+The gel cartoons are illustrative. Determine the expected size from the exact map, including the indexed tails. Review controls, ladder assignments, sample labels and unsaturated abundance measurements before pooling. A band near the expected size does not establish sequence identity. See the [PCR QC guide](docs/07_PCR_QC_GUIDE.md).
+
 Use fresh output directories; existing plans or sequencing outputs are protected against overwrite. The sample sheet is authoritative: unused combinations are monitoring positions, not evidence of an exact contamination rate. At 48 loaded combinations there are no unused sentinels.
 
 `apcs order --set cole1 -o my-order` exports CSV and XLSX order sheets. Review exact-template matches and supplier requirements before ordering. `--set ampr` exports the proposed AmpR design, whose experimental performance has not been established.
@@ -80,6 +94,14 @@ Use fresh output directories; existing plans or sequencing outputs are protected
 The order command defaults to four reverse indexes (12 oligos total); `--columns 6` includes all 14. `apcs plan` defaults to the four-column layout (32 positions); `--layout row` enables the six-column grid. Well IDs are case-insensitive.
 
 `apcs annotate template.gb --set cole1 --well a1 -o annotated-map` writes an annotated circular reference, a predicted indexed linear amplicon and an exact-map binding SVG. `apcs run` also writes a reference-evidence GenBank and an alignment-span track for every loaded well. Select a well in the HTML report for downloads. **These are annotated reference/prediction files, not read-derived consensuses.** Original features are preserved when supplied in GenBank; missing gene identities are not invented.
+
+### See the binding sites on an exact template
+
+[![Public pUC19 reference with forward and reverse binding coordinates, the omitted gap and predicted indexed product length](demo/pUC19/annotated/primer_binding.png)](demo/pUC19/annotated/primer_binding.svg)
+
+On public pUC19 **M77789.2**, the forward arm binds complement(2163..2184), and the reverse arm binds 2459..2482. The omitted gap is 274 bp; the full indexed product is **2457 bp = 2686 − 274 + 45**. These coordinates apply to this exact reference. The 46 annealing-arm bases are supplied by the oligos and do not independently verify the original template.
+
+Open the [annotated circular pUC19 map](demo/pUC19/annotated/reference_annotated.gb) or [predicted indexed A1 product](demo/pUC19/annotated/a1_predicted_amplicon.gb). The [binding guide](docs/06_MECHANISM_AND_BINDING.md) explains the strand directions and omitted region.
 
 ## How calls work
 
